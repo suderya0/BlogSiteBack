@@ -33,7 +33,7 @@ public class UserController {
 
     @GetMapping("/{userId}")
     public User getOneUser(@PathVariable Long userId){ //userid yi Path variable ile alınıyor
-        return userServices.getOneUser(userId);  //orElse userId database de mevcut değilse
+        return userServices.getOneUserById(userId);  //orElse userId database de mevcut değilse
     }
 
     @PutMapping("/{userId}")

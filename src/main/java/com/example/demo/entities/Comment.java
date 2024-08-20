@@ -11,6 +11,8 @@ import org.hibernate.annotations.OnDeleteAction;
 @Data
 public class Comment {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY) //autoincrement id üretici
+
     Long id;
     //Long postId;
 

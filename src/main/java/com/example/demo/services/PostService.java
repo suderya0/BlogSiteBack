@@ -1,30 +1,51 @@
 package com.example.demo.services;
 
+import com.example.demo.entities.Like;
 import com.example.demo.entities.Post;
 import com.example.demo.entities.User;
+import com.example.demo.repos.LikeRepository;
 import com.example.demo.repos.PostRepository;
 import com.example.demo.requests.PostCreateRequest;
 import com.example.demo.requests.PostUpdateRequest;
+import com.example.demo.responses.LikeResponse;
+import com.example.demo.responses.PostResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PostService {
     private PostRepository postRepository;
+    private LikeService likeService;
     private UserServices userServices;
 
+    @Autowired
     public PostService(PostRepository postRepository, UserServices userServices) {
         this.postRepository = postRepository;
         this.userServices = userServices;
+
     }
 
-    public List<Post> getAllPosts(Optional<Long> userId) {
+    @Lazy
+    @Autowired
+    public void setLikeService(LikeService likeService) {
+        this.likeService = likeService;
+    }
+
+    public List<PostResponse> getAllPosts(Optional<Long> userId) {
+        List<Post> list;
         if(userId.isPresent()){
-            return postRepository.findByUserId(userId.get());
+            list =  postRepository.findByUserId(userId.get());
+        }else {
+            list = postRepository.findAll();
         }
-        return postRepository.findAll();
+        return list.stream().map(p -> {
+            List<LikeResponse> likes = likeService.getAllLikesWithParam(Optional.empty(), Optional.of(p.getId()));
+            return new PostResponse(p, likes);}).collect(Collectors.toList());
     }
 
     public Post getOnePostById(Long postId) {
@@ -32,7 +53,7 @@ public class PostService {
     }
 
     public Post createOnePost(PostCreateRequest newPostRequest) {
-        User user =  userServices.getOneUser(newPostRequest.getUserId());
+        User user =  userServices.getOneUserById(newPostRequest.getUserId());
         if (user == null){
             return null;
         }

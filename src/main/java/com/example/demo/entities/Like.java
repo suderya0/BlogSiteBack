@@ -12,6 +12,7 @@ import org.hibernate.annotations.OnDeleteAction;
 public class Like {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY) //autoincrement id üretici
     Long id;
     @ManyToOne(fetch = FetchType.LAZY)  //bir sürüpostun tek user ı olabilir
     @JoinColumn(name= "post_id", nullable = false)

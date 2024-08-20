@@ -13,13 +13,13 @@ import org.hibernate.annotations.OnDeleteAction;
 public class Post {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY) //autoincrement id üretici
     Long id;
  //   Long userId; tabloyu tanımlarken kullandık
 
-    @ManyToOne(fetch = FetchType.LAZY)  //bir sürüpostun tek user ı olabilir
+    @ManyToOne(fetch = FetchType.EAGER)  //bir sürüpostun tek user ı olabilir
     @JoinColumn(name= "user_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonIgnore
     User user;
 
     String title;
